@@ -1,7 +1,11 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
+const Intern = require('./lib/Intern');
+const Manager = require('./lib/Manager');
+const Engineer = require('./lib/Engineer');
+const Team = require('./lib/Team');
 
-const team = [];
+const team = new Team();
 
 function getNext(option) {
   if (option === 'addEngineer') {
@@ -11,7 +15,7 @@ function getNext(option) {
     addIntern();
   }
   if (option === 'finish') {
-    generateHtml();
+    team.saveFile();
   }
 }
 
@@ -58,7 +62,13 @@ function addEngineer() {
       },
     ])
     .then((data) => {
-      team.push(data);
+      const engineer = new Engineer(
+        data.engineerId,
+        data.engineerName,
+        data.engineerEmail,
+        data.engineerGithub
+      );
+      team.addMember(engineer);
       getNext(data.addMore);
     });
 }
@@ -106,7 +116,13 @@ function addIntern() {
       },
     ])
     .then((data) => {
-      team.push(data);
+      const intern = new Intern(
+        data.internId,
+        data.internName,
+        data.internEmail,
+        data.internSchool
+      );
+      team.addMember(intern);
       getNext(data.addMore);
     });
 }
@@ -165,6 +181,12 @@ inquirer
     },
   ])
   .then((data) => {
-    team.push(data);
+    const manager = new Manager(
+      data.employeeId,
+      data.managerName,
+      data.managerEmail,
+      data.officeNumber
+    );
+    team.addMember(manager);
     getNext(data.addMore);
   });
